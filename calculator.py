@@ -53,6 +53,44 @@ def add(*args):
 
 # TODO: Add functions for handling more arithmetic operations.
 
+
+def multiply(*args):
+    """ Returns a STRING with the sum of the arguments """
+
+    # TODO: Fill sum with the correct value, based on the
+    # args provided.
+    product = "0"
+
+    return product
+
+
+def divide(*args):
+    """ Returns a STRING with the sum of the arguments """
+
+    # TODO: Fill sum with the correct value, based on the
+    # args provided.
+    try:
+        #do some math
+    except ZeroDivisionError:
+        status = "404 Not Found"
+        body = "<h1>Divisor cannot be zero</h1>"
+        print("ZeroDivisionError")
+    finally:
+        quotient = "1"
+
+    return quotient
+
+
+def subtract(*args):
+    """ Returns a STRING with the sum of the arguments """
+
+    # TODO: Fill sum with the correct value, based on the
+    # args provided.
+    difference = "0"
+
+    return difference
+
+
 def resolve_path(path):
     """
     Should return two values: a callable and an iterable of
@@ -76,9 +114,30 @@ def application(environ, start_response):
     #
     # TODO (bonus): Add error handling for a user attempting
     # to divide by zero.
-    pass
+    headers = [("Content-type", "text/html")]
+    try:
+        path = environ.get('PATH_INFO', None)
+        if path is None:
+            raise NameError
+        func, args = resolve_path(path)
+        body = func(*args)
+        status = "200 OK"
+    except NameError:
+        status = "404 Not Found"
+        body = "<h1>Not Found</h1>"
+    except Exception:
+        status = "500 Internal Server Error"
+        body = "<h1>Internal Server Error</h1>"
+        print(traceback.format_exc())
+    finally:
+        headers.append(('Content-length', str(len(body))))
+        start_response(status, headers)
+        return [body.encode('utf8')]
+
 
 if __name__ == '__main__':
     # TODO: Insert the same boilerplate wsgiref simple
     # server creation that you used in the book database.
-    pass
+    from wsgiref.simple_server import make_server
+    srv = make_server('localhost', 8080, application)
+    srv.serve_forever()
