@@ -1,3 +1,5 @@
+import operator
+
 """
 For your homework this week, you'll be creating a wsgi application of
 your own.
@@ -45,11 +47,9 @@ To submit your homework:
 def add(*args):
     """ Returns a STRING with the sum of the arguments """
 
-    # TODO: Fill sum with the correct value, based on the
-    # args provided.
-    sum = "0"
+    mysum = operator.add(args[0], args[1])
 
-    return sum
+    return mysum
 
 # TODO: Add functions for handling more arithmetic operations.
 
@@ -59,7 +59,8 @@ def multiply(*args):
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
-    product = "0"
+
+    product = operator.mul(args[0], args[1])
 
     return product
 
@@ -69,16 +70,16 @@ def divide(*args):
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
+    quotient = "1"
+
     try:
-        #do some math
+        operator.div(args[0], args[1])
     except ZeroDivisionError:
         status = "404 Not Found"
         body = "<h1>Divisor cannot be zero</h1>"
         print("ZeroDivisionError")
     finally:
-        quotient = "1"
-
-    return quotient
+        return quotient
 
 
 def subtract(*args):
@@ -86,7 +87,8 @@ def subtract(*args):
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
-    difference = "0"
+
+    difference = operator.sub(args[0], args[1])
 
     return difference
 
@@ -101,10 +103,17 @@ def resolve_path(path):
     # examples provide the correct *syntax*, but you should
     # determine the actual values of func and args using the
     # path.
-    func = add
-    args = ['25', '32']
 
-    return func, args
+    path = path.strip('/').split('/')
+    args = path[1:], path[2]
+
+    try:
+        func = path[0]
+    except KeyError:
+        raise NameError
+    finally:
+        return func, args
+
 
 def application(environ, start_response):
     # TODO: Your application code from the book database
