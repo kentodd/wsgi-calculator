@@ -1,4 +1,5 @@
 import operator
+import traceback
 
 """
 For your homework this week, you'll be creating a wsgi application of
@@ -49,7 +50,8 @@ def add(*args):
 
     mysum = operator.add(args[0], args[1])
 
-    return mysum
+    # Per the spec above, these operators have to return a string.
+    return str(mysum)
 
 # TODO: Add functions for handling more arithmetic operations.
 
@@ -105,10 +107,20 @@ def resolve_path(path):
     # path.
 
     path = path.strip('/').split('/')
-    args = path[1:], path[2]
+    
+    # Either the operator itself (add, subtract, etc.,) or `response_path` has to change the
+    # arguments into numbers so that they can be operated on. I'll do it here.
+    args = int(path[1]), int(path[2])
 
     try:
-        func = path[0]
+        # path[0] gives you the NAME of the function. Now you've got to figure out the actual
+        # operator/function to use.
+        func_name = path[0]
+        
+        # One way to do it...
+        if func_name == "add":
+            func = add
+        # ... etc.
     except KeyError:
         raise NameError
     finally:
